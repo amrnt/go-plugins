@@ -94,7 +94,7 @@ func (l *zeroLogger) Init(opts ...logger.Option) error {
 	if l.opts.ReportCaller {
 		l.zLog = l.zLog.With().Caller().Logger()
 	}
-	
+
 	// Adding hooks if exist
 	for _, hook := range l.opts.Hooks {
 		l.zLog = l.zLog.Hook(hook)
@@ -119,13 +119,13 @@ func (l *zeroLogger) Init(opts ...logger.Option) error {
 }
 
 func (l *zeroLogger) Fields(fields map[string]interface{}) logger.Logger {
-	l.zLog = l.zLog.With().Fields(fields).Logger()
-	return l
+	lx := l.zLog.With().Fields(fields).Logger()
+	return &zeroLogger{zLog: lx, opts: l.opts}
 }
 
 func (l *zeroLogger) Error(err error) logger.Logger {
-	l.zLog = l.zLog.With().Fields(map[string]interface{}{zerolog.ErrorFieldName: err}).Logger()
-	return l
+	lx := l.zLog.With().Fields(map[string]interface{}{zerolog.ErrorFieldName: err}).Logger()
+	return &zeroLogger{zLog: lx, opts: l.opts}
 }
 
 func (l *zeroLogger) Log(level logger.Level, args ...interface{}) {
